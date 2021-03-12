@@ -29,14 +29,16 @@ void q_free(queue_t *q)
     /* Free queue structure */
     if (q) {
         list_ele_t *tmp = q->head;
-        list_ele_t *tok;
+        list_ele_t *tok = NULL;
         while (tmp) {
             tok = tmp->next;
+            free(tmp->value);
             free(tmp);
             tmp = tok;
         }
+        free(q);
     }
-    free(q);
+    return;
 }
 
 /*
@@ -51,25 +53,26 @@ bool q_insert_head(queue_t *q, char *s)
     if (!q) {
         return false;
     }
-    list_ele_t *newh;
-    /* TOADY: What should you do if the q is NULL? */
-    newh = malloc(sizeof(list_ele_t));
-    char *val = malloc(strlen(s));
+    int x = strlen(s);
+    list_ele_t *newh = malloc(sizeof(list_ele_t));
+    if (!newh)
+        return false;
+    char *val = malloc(x + 1);
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
-    if (!newh || !val) {
+    if (!val) {
+        free(newh);
         return false;
     }
-    strncpy(val, s, strlen(s));
+    memcpy(val, s, x);
+    val[x] = '\0';
     newh->value = val;
-    if (q->size != 0) { /*if q is not empty.*/
-        newh->next = q->head;
-        q->head = newh;
-    } else {
-        q->head = newh;
-        q->tail = newh;
-    }
-    q->size++;
+    newh->next = q->head;
+    if (q->size == 0)
+        q->tail = newh; /*if q is not empty.*/
+
+    q->head = newh;
+    q->size += 1;
     return true;
 }
 
@@ -85,24 +88,26 @@ bool q_insert_tail(queue_t *q, char *s)
     if (!q) {
         return false;
     }
-
-    list_ele_t *appendix = malloc(sizeof(list_ele_t));
-    char *val = malloc(strlen(s));
-    if (!appendix || !val) {
+    int x = strlen(s);
+    list_ele_t *newt = malloc(sizeof(list_ele_t));
+    if (!newt) {
         return false;
     }
-    strncpy(val, s, strlen(s));
-    appendix->value = val;
-    appendix->next = NULL;
-    /* TOADY: You need to write the complete code for this function */
-    if (q->size != 0) { /*if q is not empty.*/
-        q->tail->next = appendix;
-        q->tail = appendix;
-    } else {
-        q->head = appendix;
-        q->tail = appendix;
+    char *val = malloc(x + 1);
+    if (!val) {
+        free(newt);
+        return false;
     }
-    q->size++;
+    memcpy(val, s, x);
+    val[x] = '\0';
+    newt->value = val;
+    if (q->size != 0) { /*if q is not empty.*/
+        q->tail->next = newt;
+    } else
+        q->head = newt;
+    newt->next = NULL;
+    q->tail = newt;
+    q->size += 1;
     /* Remember: It should operate in O(1) time */
     /* TOADY: Remove the above comment when you are about to implement. */
     return true;
@@ -112,26 +117,25 @@ bool q_insert_tail(queue_t *q, char *s)
  * Attempt to remove element from head of queue.
  * Return true if successful. (V)
  * Return false if queue is NULL or empty. (V)
- * If sp is non-NULL and an element is removed, copy the removed string to *sp
+ * If sp is not NULL and an element is removed, copy the removed string to *sp
  * (up to a maximum of bufsize-1 characters, plus a null terminator.)
  * The space used by the list element and the string should be freed.
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    if (!q || q->size == 0) {
+    if (!q || !q->size || !sp)
         return false;
-    }
-    list_ele_t *rm = q->head;
-    q->head = rm->next;
-    q->size--;
+    if (!memcpy(sp, q->head->value, bufsize - 1))
+        return false;
+    sp[bufsize - 1] = '\0';
 
-    if (sp) {
-        strncpy(sp, rm->value, bufsize - 1);
-    }
-    free(rm->value);
-    free(rm);
-    /* TOADY: You need to fix up this code. */
-    /* TOADY: Remove the above comment when you are about to implement. */
+    list_ele_t *temp = q->head;
+    q->head = q->head->next;
+    q->size--;
+    free(temp->value);
+    free(temp);
+    temp = NULL;
+
     return true;
 }
 
@@ -144,7 +148,7 @@ int q_size(queue_t *q)
     /* TOADY: You need to write the code for this function */
     /* Remember: It should operate in O(1) time */
     /* TOADY: Remove the above comment when you are about to implement. */
-    if (!q) {
+    if (!q || !q->head) {
         return 0;
     }
     return q->size;
@@ -157,22 +161,41 @@ int q_size(queue_t *q)
  * (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
  * It should rearrange the existing ones.
  */
+/*void _takeaddr(queue_t *q)
+{
+    if (!q || !q->head)
+        return;
+    list_ele_t *ptr = q->head;
+    int count = 0;
+    printf("queue's elements' addresses: \n");
+    while (ptr) {
+        printf("loc %d: %p\n", count, ptr);
+        count++;
+        ptr = ptr->next;
+    }
+}*/
+
 void q_reverse(queue_t *q)
 {
-    /* TOADY: You need to write the code for this function */
-    /* TOADY: Remove the above comment when you are about to implement. */
-    if (q->size == 0 || q->size == 1) {
+    if (!q || q->size <= 1 || !q->head)
         return;
-    }
     list_ele_t *current = q->head;
     list_ele_t *prev = NULL;
     list_ele_t *upcoming = current->next;
-    while (upcoming != NULL) {
+    /*_takeaddr(q);*/
+    while (upcoming) {
         current->next = prev;
+        /*printf("step 12: prev:%p, current:%p, upcoming:%p\n", prev, current,
+               upcoming);*/
         prev = current;
         current = upcoming;
         upcoming = current->next;
+        /*printf("step  4: prev:%p, current:%p, upcoming:%p\n", prev, current,
+               upcoming);*/
     }
+    current->next = prev;
+    q->tail = q->head;
+    q->head = current;
 }
 
 /*
