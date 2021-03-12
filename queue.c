@@ -54,7 +54,7 @@ bool q_insert_head(queue_t *q, char *s)
     list_ele_t *newh;
     /* TOADY: What should you do if the q is NULL? */
     newh = malloc(sizeof(list_ele_t));
-    char *val = malloc(sizeof(strlen(s)) + 1);
+    char *val = malloc(sizeof((s)));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     if (!newh || !val) {
@@ -87,7 +87,7 @@ bool q_insert_tail(queue_t *q, char *s)
     }
 
     list_ele_t *appendix = malloc(sizeof(list_ele_t));
-    char *val = malloc(strlen(s) + 1);
+    char *val = malloc(sizeof(s));
     if (!appendix || !val) {
         return false;
     }
@@ -218,5 +218,16 @@ void merge_sort(queue_t *q)
             merge(q, tmp, left_start, mid, right_end);
         }
     }
+}
+*/
+/*
+int main()
+{
+    queue_t *deu = q_new();
+    char *typ_a = "panther";
+    char *typ_b = "tiger";
+    q_insert_tail(deu, typ_a);
+    q_insert_head(deu, typ_b);
+    q_reverse(deu);
 }
 */
