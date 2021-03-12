@@ -54,7 +54,7 @@ bool q_insert_head(queue_t *q, char *s)
     list_ele_t *newh;
     /* TOADY: What should you do if the q is NULL? */
     newh = malloc(sizeof(list_ele_t));
-    char *val = malloc(sizeof((s)));
+    char *val = malloc(strlen(s));
     /* Don't forget to allocate space for the string and copy it */
     /* What if either call to malloc returns NULL? */
     if (!newh || !val) {
@@ -87,7 +87,7 @@ bool q_insert_tail(queue_t *q, char *s)
     }
 
     list_ele_t *appendix = malloc(sizeof(list_ele_t));
-    char *val = malloc(sizeof(s));
+    char *val = malloc(strlen(s));
     if (!appendix || !val) {
         return false;
     }
