@@ -64,7 +64,7 @@ bool q_insert_head(queue_t *q, char *s)
         free(newh);
         return false;
     }
-    memcpy(val, s, x);
+    strncpy(val, s, x);
     val[x] = '\0';
     newh->value = val;
     newh->next = q->head;
@@ -199,15 +199,126 @@ void q_reverse(queue_t *q)
 }
 
 /*
+list_ele_t *list_merge(list_ele_t *l1, list_ele_t *l2);
+
+
+list_ele_t *list_split(list_ele_t *head)
+{
+    if (head == NULL || head->next == NULL)
+        return head;
+
+    list_ele_t *fast = head->next;
+    list_ele_t *slow = head;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    fast = slow->next;
+    slow->next = NULL;
+
+    list_ele_t *l1 = list_split(head);
+    list_ele_t *l2 = list_split(fast);
+
+    return list_merge(l1, l2);
+}
+
+list_ele_t *list_merge(list_ele_t *l1, list_ele_t *l2)
+{
+    if (l1 == NULL)
+        return l2;
+    if (l2 == NULL)
+        return l1;
+
+    if (strcmp(l1->value, l2->value) < 0) {
+        l1->next = list_merge(l1->next, l2);
+        return l1;
+    } else {
+        l2->next = list_merge(l1, l2->next);
+        return l2;
+    }
+}
+
+void q_sort(queue_t *q)
+{
+    if (q == NULL || q->size <= 1)
+        return;
+    q->head = list_split(q->head);
+    list_ele_t *t = q->head;
+    while (t->next)
+        t = t->next;
+    q->tail = t;
+}
+*/
+
+
+/*
  * Sort elements of queue in ascending order
  * No effect if q is NULL or empty. In addition, if q has only one
  * element, do nothing.
  */
+
+list_ele_t *merge_sort(list_ele_t *head);
+list_ele_t *merge(list_ele_t *s, list_ele_t *e);
+/*void print_node(list_ele_t *n);*/
+
 void q_sort(queue_t *q)
 {
-    /* TODO: You need to write the code for this function */
-    /* TODO: Remove the above comment when you are about to implement. */
+    if (!q || !q->head || !q->tail || q->head == q->tail)
+        return;
+    q->head = merge_sort(q->head);
+    list_ele_t *t = q->head;
+    while (t->next)
+        t = t->next;
+    q->tail = t;
 }
+
+list_ele_t *merge_sort(list_ele_t *head)
+{
+    if (!head || !head->next)
+        return head;
+    list_ele_t *fast = head->next;
+    list_ele_t *slow = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    fast = slow->next;
+    slow->next = NULL;
+    list_ele_t *h1 = merge_sort(head);
+    list_ele_t *h2 = merge_sort(fast);
+    return merge(h1, h2);
+}
+
+list_ele_t *merge(list_ele_t *s, list_ele_t *e)
+{
+    if (!s)
+        return e;
+    if (!e)
+        return s;
+    if (strcmp(s->value, e->value) < 0) { /*  */
+        s->next = merge(s->next, e);
+        return s;
+    } else {
+        e->next = merge(s, e->next);
+        return e;
+    }
+}
+/*
+void print_node(list_ele_t *n)
+{
+    if (!n)
+        return;
+
+    printf("%s->", n->value);
+    while (n->next) {
+        printf("%s->", n->next->value);
+        n = n->next;
+    }
+    printf("\nthe queue end here...\n\n");
+}
+/*
+
 
 /*void _swap(queue_t *q, int a, int b)
 {

@@ -1,4 +1,0 @@
-Unknown command 'malloc'
-Unknown command 'malloc'
-Unknown command 'r'
-Error limit exceeded.  Stopping command execution
