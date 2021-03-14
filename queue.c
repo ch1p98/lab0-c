@@ -12,7 +12,6 @@
 queue_t *q_new()
 {
     queue_t *q = malloc(sizeof(queue_t));
-    /* TOADY: What if malloc returned NULL? */
     if (!q) {
         return NULL;
     }
@@ -25,8 +24,6 @@ queue_t *q_new()
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
-    /* TOADY: How about freeing the list elements and the strings? */
-    /* Free queue structure */
     if (q) {
         list_ele_t *tmp = q->head;
         list_ele_t *tok = NULL;
@@ -41,13 +38,7 @@ void q_free(queue_t *q)
     return;
 }
 
-/*
- * Attempt to insert element at head of queue.
- * Return true if successful.
- * Return false if q is NULL or could not allocate space.
- * Argument s points to the string to be stored.
- * The function must explicitly allocate space and copy the string into it.
- */
+
 bool q_insert_head(queue_t *q, char *s)
 {
     if (!q) {
@@ -58,8 +49,6 @@ bool q_insert_head(queue_t *q, char *s)
     if (!newh)
         return false;
     char *val = malloc(x + 1);
-    /* Don't forget to allocate space for the string and copy it */
-    /* What if either call to malloc returns NULL? */
     if (!val) {
         free(newh);
         return false;
@@ -76,13 +65,7 @@ bool q_insert_head(queue_t *q, char *s)
     return true;
 }
 
-/*
- * Attempt to insert element at tail of queue.
- * Return true if successful.
- * Return false if q is NULL or could not allocate space.
- * Argument s points to the string to be stored.
- * The function must explicitly allocate space and copy the string into it.
- */
+
 bool q_insert_tail(queue_t *q, char *s)
 {
     if (!q) {
@@ -108,19 +91,10 @@ bool q_insert_tail(queue_t *q, char *s)
     newt->next = NULL;
     q->tail = newt;
     q->size += 1;
-    /* Remember: It should operate in O(1) time */
-    /* TOADY: Remove the above comment when you are about to implement. */
     return true;
 }
 
-/*
- * Attempt to remove element from head of queue.
- * Return true if successful. (V)
- * Return false if queue is NULL or empty. (V)
- * If sp is not NULL and an element is removed, copy the removed string to *sp
- * (up to a maximum of bufsize-1 characters, plus a null terminator.)
- * The space used by the list element and the string should be freed.
- */
+
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
     if (!q || !q->size || !sp)
@@ -139,10 +113,7 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
     return true;
 }
 
-/*
- * Return number of elements in queue.
- * Return 0 if q is NULL or empty
- */
+
 int q_size(queue_t *q)
 {
     /* TOADY: You need to write the code for this function */
@@ -153,14 +124,6 @@ int q_size(queue_t *q)
     }
     return q->size;
 }
-
-/*
- * Reverse elements in queue
- * No effect if q is NULL or empty
- * This function should not allocate or free any list elements
- * (e.g., by calling q_insert_head, q_insert_tail, or q_remove_head).
- * It should rearrange the existing ones.
- */
 /*void _takeaddr(queue_t *q)
 {
     if (!q || !q->head)
@@ -174,7 +137,6 @@ int q_size(queue_t *q)
         ptr = ptr->next;
     }
 }*/
-
 void q_reverse(queue_t *q)
 {
     if (!q || q->size <= 1 || !q->head)
@@ -185,78 +147,14 @@ void q_reverse(queue_t *q)
     /*_takeaddr(q);*/
     while (upcoming) {
         current->next = prev;
-        /*printf("step 12: prev:%p, current:%p, upcoming:%p\n", prev, current,
-               upcoming);*/
         prev = current;
         current = upcoming;
         upcoming = current->next;
-        /*printf("step  4: prev:%p, current:%p, upcoming:%p\n", prev, current,
-               upcoming);*/
     }
     current->next = prev;
     q->tail = q->head;
     q->head = current;
 }
-
-/*
-list_ele_t *list_merge(list_ele_t *l1, list_ele_t *l2);
-
-
-list_ele_t *list_split(list_ele_t *head)
-{
-    if (head == NULL || head->next == NULL)
-        return head;
-
-    list_ele_t *fast = head->next;
-    list_ele_t *slow = head;
-
-    while (fast && fast->next) {
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-    fast = slow->next;
-    slow->next = NULL;
-
-    list_ele_t *l1 = list_split(head);
-    list_ele_t *l2 = list_split(fast);
-
-    return list_merge(l1, l2);
-}
-
-list_ele_t *list_merge(list_ele_t *l1, list_ele_t *l2)
-{
-    if (l1 == NULL)
-        return l2;
-    if (l2 == NULL)
-        return l1;
-
-    if (strcmp(l1->value, l2->value) < 0) {
-        l1->next = list_merge(l1->next, l2);
-        return l1;
-    } else {
-        l2->next = list_merge(l1, l2->next);
-        return l2;
-    }
-}
-
-void q_sort(queue_t *q)
-{
-    if (q == NULL || q->size <= 1)
-        return;
-    q->head = list_split(q->head);
-    list_ele_t *t = q->head;
-    while (t->next)
-        t = t->next;
-    q->tail = t;
-}
-*/
-
-
-/*
- * Sort elements of queue in ascending order
- * No effect if q is NULL or empty. In addition, if q has only one
- * element, do nothing.
- */
 
 list_ele_t *merge_sort(list_ele_t *head);
 list_ele_t *merge(list_ele_t *s, list_ele_t *e);
@@ -318,4 +216,3 @@ void print_node(list_ele_t *n)
     printf("\nthe queue end here...\n\n");
 }
 */
-
