@@ -317,51 +317,5 @@ void print_node(list_ele_t *n)
     }
     printf("\nthe queue end here...\n\n");
 }
-/*
-
-
-/*void _swap(queue_t *q, int a, int b)
-{
-    if (q->size < a || q->size < b) {
-        return;
-    }
-}
 */
 
-/*void merge(queue_t *q, int *tmp, int s, int m, int r)
-{
-    if (r - s == 2) {
-    }
-    if
-        > 2 : s and m + 1 as index 1 and 2
-}
-*/
-/*
-void merge_sort(queue_t *q)
-{
-    int curr_size, left_start;
-    int *tmp;
-    tmp = malloc(sizeof(int) * (q->size));
-    if (!tmp)
-        return;
-    for (curr_size = 1; curr_size < q->size; curr_size *= 2) {
-        for (left_start = 0; left_start < q->size;
-             left_start += 2 * curr_size) {
-            int right_end = min(q->size - 1, left_start + 2 * curr_size);
-            int mid = (left_start + right_end) / 2;
-            merge(q, tmp, left_start, mid, right_end);
-        }
-    }
-}
-*/
-/*
-int main()
-{
-    queue_t *deu = q_new();
-    char *typ_a = "panther";
-    char *typ_b = "tiger";
-    q_insert_tail(deu, typ_a);
-    q_insert_head(deu, typ_b);
-    q_reverse(deu);
-}
-*/
